@@ -72,7 +72,7 @@ class Deferred {
     }
 }
 
-
+//异步任务
 let getData = (param)=>{
     let deferred = new Deferred()
     if (param ==='success') {
@@ -87,6 +87,7 @@ let getData = (param)=>{
     return deferred.promise
 }
 
+//异步任务
 let getOtherData = ()=>{
     let def = new Deferred()
     setTimeout(()=>{
@@ -95,26 +96,38 @@ let getOtherData = ()=>{
     return def.promise
 }
 
-
+//异步执行 抛出错误
 getData('err').then((rs)=>{
     console.log(rs)
 },(err)=>{
     console.log(err)
 })
 
+//异步执行
 getOtherData().then((rs)=>{
     console.log(rs)
 },err=>{
     console.log(err)
 })
 
+//异步串行
+getData('success').then(rs=>{
+    console.log('this is getData: '+rs)
+    return getOtherData()
+}).then(rs=>{
+    console.log('异步串行结果:'+rs)
+},err=>{
+    console.log('异步串行错误 :'+err)
+})
 
+//异步并行
 new Deferred().all([getData('success'),getOtherData()]).then((rs)=>{
     console.log('all result is:'+rs)
 },err=>{
     console.log('all err is'+err)
 })
 
+//异步并行 优先级
 new Deferred().race([getData('success'),getOtherData()]).then(rs=>{
     console.log('race result is:'+rs)
 },err=>{
