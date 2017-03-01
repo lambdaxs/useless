@@ -5,7 +5,7 @@
 
 ///静态方法
 //无限序列的实现
-Array.seq = function* (start,step,inc=true){
+const seq = function* (start,step,inc=true){
     while (1){
         yield start
         if (inc){
@@ -17,11 +17,11 @@ Array.seq = function* (start,step,inc=true){
 }
 
 //range的实现
-Array.range = function (start, end, step = 1) {
+const range = function (start, end, step = 1) {
     let rs = []
     let sub = start - end
     let inc = sub < 0
-    let it = Array.seq(start,step,inc)
+    let it = seq(start,step,inc)
 
     while (1){
         let value = it.next().value
@@ -41,9 +41,9 @@ Array.range = function (start, end, step = 1) {
 
 ///实例方法
 //groupBy的实现 数组分组
-Array.prototype.groupBy = function(callBack)  {
+const groupBy = function(arr,callBack)  {
     let result = {}
-    this.forEach((value,index)=>{
+    arr.forEach((value,index)=>{
         let key = callBack(value,index)
         if (!result[key]){
             result[key] = []
@@ -56,58 +56,74 @@ Array.prototype.groupBy = function(callBack)  {
 }
 
 //head的实现 取头
-Array.prototype.head = function () {
-    return (!this || this.length == 0) ?null: this[0]
+const head = function (arr) {
+    return (!arr || arr.length == 0) ?null: arr[0]
 }
 
 
 //last的实现 取尾
-Array.prototype.last = function () {
-    return (!this ||this.length == 0)? null: this[this.length - 1]
+const last = function (arr) {
+    return (!arr ||arr.length == 0)? null: arr[arr.length - 1]
 }
 
 //tail的实现 去头
-Array.prototype.tail = function () {
-    return !this || this.length == 0? []: this.slice(1)
+const tail = function (arr) {
+    return !arr || arr.length == 0? []: arr.slice(1)
 }
 
 //init的实现 去尾
-Array.prototype.init = function () {
-    return !this || this.length == 0? []:this.slice(0,-1)
+const init = function (arr) {
+    return !arr || arr.length == 0? []:arr.slice(0,-1)
 }
 
 //take的实现 获取前n个元素
-Array.prototype.take = function (n) {
-    return n && n>=0 ? this.slice(0, n) : []
+const take = function (arr,n) {
+    return n && n>=0 ? arr.slice(0, n) : []
 }
 
 //drop的实现 丢弃前面n个元素
-Array.prototype.drop = function (n) {
-    const count = this.length
+const drop = function (arr,n) {
+    const count = arr.length
     if (n >= count) return []
-    return n && n>=0 ? this.slice(n-count): this
+    return n && n>=0 ? arr.slice(n-count): arr
 }
 
 //splitAt的实现 数组切分
-Array.prototype.splitAt = function (location) {
+const splitAt = function (arr,location) {
     let result = []
-    result[0] = this.take(location)
-    result[1] = this.drop(location)
+    result[0] = take(arr,location)
+    result[1] = drop(arr,location)
     return result
 }
 
 //sum的实现
-Array.prototype.sum = function (callback) {
-    if (this.length == 0)return 0
+const sum = function (arr,callback) {
+    if (arr.length == 0)return 0
 
-    let isNumber = this.every((v)=>{
+    let isNumber = arr.every((v)=>{
         return typeof v == 'number'
     })
     if (isNumber){
-        return this.reduce((a,b)=>{return a+b})
+        return arr.reduce((a,b)=>{return a+b})
     }else {
-        return this.map(obj=>{
+        return arr.map(obj=>{
             return callback(obj)
         }).reduce((a,b)=>{return a+b})
     }
+}
+
+
+
+module.exports = {
+    groupBy,
+    head,
+    last,
+    tail,
+    init,
+    take,
+    drop,
+    splitAt,
+    sum,
+    seq,
+    range
 }
